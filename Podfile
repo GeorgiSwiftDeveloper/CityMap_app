@@ -9,4 +9,5 @@ target 'City_app' do
 
   # Pods for City_app
   pod 'Alamofire'
+  
 end
