@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import CoreLocation
 import Alamofire
+import AlamofireImage
 
 
 class MapView: UIViewController, UIGestureRecognizerDelegate {
@@ -35,6 +36,7 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
     var collectionView: UICollectionView?
     
     var imageUrlArray = [String]()
+    var imageArray = [UIImage]()
     
     
     //
@@ -68,10 +70,14 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
     @objc func dropPin(sender: UITapGestureRecognizer) {
         removePin()
         removeSpiner()
+        removeProgressLbl()
         animateViewUp()
         swipeGesture()
         addSpiner()
         addProgressLbl()
+        
+        
+        
         let touchPoint = sender.location(in: mapView)
         //Converting touchPoint into GPS coordinate
         let touchCoordinate = mapView.convert(touchPoint, toCoordinateFrom: mapView)
@@ -81,8 +87,19 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
         let coordinateRegion = MKCoordinateRegion(center: touchCoordinate, latitudinalMeters: regionRadious * 2.0, longitudinalMeters: regionRadious * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
         
-        retrieveUrls(forAnnotation: annotation) { (true) in
-            print(self.imageUrlArray)
+        retrieveUrls(forAnnotation: annotation) { (finished) in
+            if finished {
+                self.retrieveImage(handler: { (finished) in
+                    if  finished {
+                        //hide spinner
+                        self.removeSpiner()
+                        //hide label
+                        self.removeProgressLbl()
+                        // reload collectionView
+                        
+                    }
+                })
+            }
         }
     }
     
@@ -98,7 +115,6 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
     func retrieveUrls(forAnnotation annotations: DroppablePin, handler: @escaping(_ status: Bool) -> () ) {
         imageUrlArray = []
         Alamofire.request(flickerUrl(forApiKey: apiKey, withAnnotation: annotations, numberPhotos: 40)).responseJSON { (response) in
-            print(response)
             guard let json = response.result.value as? Dictionary<String, AnyObject> else {return}
             let photosDict = json["photos"] as! Dictionary<String, AnyObject>
             let photosDictArray = photosDict["photo"] as! [Dictionary<String, AnyObject>]
@@ -107,6 +123,21 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
                 self.imageUrlArray.append(postUrl)
             }
             handler(true)
+        }
+    }
+    
+    func retrieveImage(handler: @escaping (_ status : Bool) -> ()) {
+        imageArray = []
+        for url in imageUrlArray {
+            Alamofire.request(url).responseImage { (response) in
+                guard let image = response.result.value else {return}
+                self.imageArray.append(image)
+                self.progressLbl?.text = "\(self.imageArray.count)/40 Images Downloading"
+                
+                if self.imageArray.count == self.imageUrlArray.count {
+                    handler(true)
+                }
+            }
         }
     }
     
@@ -142,7 +173,7 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    
+    //Add spinder function
     func addSpiner() {
         spinner = UIActivityIndicatorView()
         spinner?.center = CGPoint(x: UIScreen.main.bounds.width / 2, y: 150)
@@ -152,7 +183,7 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
         collectionView!.addSubview(spinner!)
     }
  
-    
+    //Remove Spinner function
     func removeSpiner() {
         if spinner != nil {
             spinner?.removeFromSuperview()
@@ -168,6 +199,12 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
         progressLbl?.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         progressLbl?.text = "12/444 pictures"
         collectionView!.addSubview(progressLbl!)
+    }
+    
+    func removeProgressLbl() {
+        if progressLbl != nil {
+            progressLbl?.removeFromSuperview()
+        }
     }
     
     
