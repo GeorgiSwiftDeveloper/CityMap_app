@@ -71,12 +71,16 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
         removePin()
         removeSpiner()
         removeProgressLbl()
+        cancelAllSessions()
         animateViewUp()
         swipeGesture()
         addSpiner()
         addProgressLbl()
         
+        imageArray = []
+        imageUrlArray = []
         
+        self.collectionView?.reloadData()
         
         let touchPoint = sender.location(in: mapView)
         //Converting touchPoint into GPS coordinate
@@ -96,7 +100,7 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
                         //hide label
                         self.removeProgressLbl()
                         // reload collectionView
-                        
+                        self.collectionView?.reloadData()
                     }
                 })
             }
@@ -113,7 +117,7 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: Using Alamofire to download URLS
     func retrieveUrls(forAnnotation annotations: DroppablePin, handler: @escaping(_ status: Bool) -> () ) {
-        imageUrlArray = []
+        
         Alamofire.request(flickerUrl(forApiKey: apiKey, withAnnotation: annotations, numberPhotos: 40)).responseJSON { (response) in
             guard let json = response.result.value as? Dictionary<String, AnyObject> else {return}
             let photosDict = json["photos"] as! Dictionary<String, AnyObject>
@@ -127,7 +131,7 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func retrieveImage(handler: @escaping (_ status : Bool) -> ()) {
-        imageArray = []
+  
         for url in imageUrlArray {
             Alamofire.request(url).responseImage { (response) in
                 guard let image = response.result.value else {return}
@@ -138,6 +142,17 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
                     handler(true)
                 }
             }
+        }
+    }
+    
+    
+    //Using this function we just canceled all of the sessions that we need.
+    
+    func cancelAllSessions() {
+        Alamofire.SessionManager.default.session.getTasksWithCompletionHandler { (sessionDataTask, uploadData, dowloadData) in
+            sessionDataTask.forEach({$0.cancel()})
+            dowloadData.forEach({$0.cancel()})
+            
         }
     }
     
@@ -167,6 +182,7 @@ class MapView: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func animateViewDown() {
+        cancelAllSessions()
         pullUpViewHeight.constant = 0
         UIView.animate(withDuration: 0.3) {
             self.loadViewIfNeeded()
@@ -260,12 +276,15 @@ extension MapView: UICollectionViewDataSource, UICollectionViewDelegate {
         return 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return imageArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as? PhotoCell
-        return cell!
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as? PhotoCell else {return UICollectionViewCell () }
+        let imageIndex = imageArray[indexPath.row]
+        let cellImage = UIImageView(image: imageIndex)
+        cell.addSubview(cellImage)
+        return cell
     }
     
     
