@@ -83,6 +83,55 @@
             </objects>
             <point key="canvasLocation" x="132" y="132.68365817091455"/>
         </scene>
+        <!--PopVC-->
+        <scene sceneID="mbz-Af-y2J">
+            <objects>
+                <viewController storyboardIdentifier="PopVC" id="hhL-Vy-dYR" customClass="PopVC" customModule="City_app" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="gJK-ZM-6Ch">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RJO-Wv-beJ">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1pn-LQ-s59">
+                                <rect key="frame" x="72.5" y="622" width="230" height="25"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Double-tap to Dismiss" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vPk-1K-T81">
+                                        <rect key="frame" x="28" y="1" width="174.5" height="23.5"/>
+                                        <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="IE1-3z-ZQh"/>
+                                    <constraint firstItem="vPk-1K-T81" firstAttribute="centerX" secondItem="1pn-LQ-s59" secondAttribute="centerX" id="bA3-Gy-p4Z"/>
+                                    <constraint firstItem="vPk-1K-T81" firstAttribute="centerY" secondItem="1pn-LQ-s59" secondAttribute="centerY" id="fTf-d8-Aqq"/>
+                                    <constraint firstAttribute="width" constant="230" id="wWu-9I-Ged"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="RJO-Wv-beJ" firstAttribute="leading" secondItem="OWY-VN-IEP" secondAttribute="leading" id="1EN-1d-R2c"/>
+                            <constraint firstItem="OWY-VN-IEP" firstAttribute="bottom" secondItem="1pn-LQ-s59" secondAttribute="bottom" constant="20" id="3gM-Wi-gvU"/>
+                            <constraint firstItem="1pn-LQ-s59" firstAttribute="centerX" secondItem="gJK-ZM-6Ch" secondAttribute="centerX" id="DGL-E3-NbL"/>
+                            <constraint firstItem="RJO-Wv-beJ" firstAttribute="trailing" secondItem="OWY-VN-IEP" secondAttribute="trailing" id="IKt-HK-N9X"/>
+                            <constraint firstItem="RJO-Wv-beJ" firstAttribute="top" secondItem="gJK-ZM-6Ch" secondAttribute="top" id="KkA-BR-cS5"/>
+                            <constraint firstItem="RJO-Wv-beJ" firstAttribute="bottom" secondItem="OWY-VN-IEP" secondAttribute="bottom" id="Qqi-vB-skR"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="OWY-VN-IEP"/>
+                    </view>
+                    <connections>
+                        <outlet property="popImageView" destination="RJO-Wv-beJ" id="2iH-HR-nr3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Fku-dh-hjp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="943.20000000000005" y="130.88455772113943"/>
+        </scene>
     </scenes>
     <resources>
         <image name="locationButton" width="67" height="67"/>
